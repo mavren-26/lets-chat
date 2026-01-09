@@ -124,7 +124,9 @@ function wrapAuthCallback(username, cb) {
             attempt.attempts++;
 
             if (attempt.attempts >= settings.auth.throttling.threshold) {
-                var lock = Math.min(5000 * Math.pow(2, (attempt.attempts - settings.auth.throttling.threshold), MAX_AUTH_DELAY_TIME));
+                var delay = 5000 * Math.pow(2, attempt.attempts - settings.auth.throttling.threshold);
+                var lock = Math.min(delay, MAX_AUTH_DELAY_TIME);
+
                 attempt.lockedUntil = Date.now() + lock;
                 return cb(err, user, {
                     locked: true,
